@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import {
   Card,
@@ -41,39 +42,9 @@ const styles = (theme) => ({
 });
 
 class Review extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      slideInx: 0,
-    };
-  }
-
-  nextPerson = () => {
-    this.setState({ slideInx: this.state.slideInx + 1 });
-    if (this.state.slideInx >= this.props.people.length - 1) {
-      this.setState({ slideInx: 0 });
-    }
-  };
-
-  prevPerson = () => {
-    this.setState({ slideInx: this.state.slideInx - 1 });
-    if (this.state.slideInx <= 0) {
-      this.setState({ slideInx: this.props.people.length - 1 });
-    }
-  };
-
-  randomPerson = () => {
-    let randomNum = Math.floor(Math.random() * this.props.people.length);
-
-    if (randomNum === this.state.slideInx) {
-      randomNum = this.state.slideInx + 1;
-    }
-    this.setState({ slideInx: randomNum });
-  };
-
   render() {
-    const { classes } = this.props;
-    const { name, job, image, text } = this.props.people[this.state.slideInx];
+    const { classes, nextPerson, prevPerson, randomPerson } = this.props;
+    const { name, job, image, text } = this.props.people[this.props.slideInx];
     return (
       <Container>
         <Grid container justifyContent="center" alignItems="center">
@@ -122,10 +93,10 @@ class Review extends Component {
               </Typography>
             </CardContent>
             <CardActions disableSpacing>
-              <IconButton onClick={this.prevPerson}>
+              <IconButton onClick={prevPerson}>
                 <ArrowBackIosIcon />
               </IconButton>
-              <IconButton onClick={this.nextPerson}>
+              <IconButton onClick={nextPerson}>
                 <ArrowForwardIosIcon />
               </IconButton>
             </CardActions>
@@ -133,7 +104,7 @@ class Review extends Component {
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={this.randomPerson}
+                onClick={randomPerson}
               >
                 Surprise Me
               </Button>
@@ -144,4 +115,13 @@ class Review extends Component {
     );
   }
 }
+
+Review.propTypes = {
+  people: PropTypes.array.isRequired,
+  slideInx: PropTypes.number.isRequired,
+  nextPerson: PropTypes.func.isRequired,
+  prevPerson: PropTypes.func.isRequired,
+  randomPerson: PropTypes.func.isRequired,
+};
+
 export default withStyles(styles, { withTheme: true })(Review);

@@ -1,10 +1,30 @@
 import React from "react";
-import Enzyme, { shallow, ShallowWrapper } from "enzyme";
+import Enzyme, { shallow, ShallowWrapper, mount, render } from "enzyme";
 import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
-import App from "./App";
-import Review from "./components/Review";
+import Review from "./Review";
 
 Enzyme.configure({ adapter: new Adapter() });
+
+const AppProps = {
+  people: [
+    {
+      image: "http://fake.com",
+      text: "test info",
+      job: "fakejob",
+      name: "slide name",
+    },
+  ],
+  slideInx: 0,
+  nextPerson: () => {
+    console.log("next person");
+  },
+  prevPerson: () => {
+    console.log("perv person");
+  },
+  randomPerson: () => {
+    console.log("random person");
+  },
+};
 
 /**
  * Factory Function - Create a ShallowWrapper for the App component
@@ -14,9 +34,7 @@ Enzyme.configure({ adapter: new Adapter() });
  * @returns {ShallowWrapper}
  */
 const setup = (props = {}, state = null) => {
-  const wrapper = shallow(<App {...props} />);
-  if (state) wrapper.setState(state);
-  return wrapper;
+  const wrapper = shallow(<Review {...AppProps} />);
 };
 
 /**
@@ -30,18 +48,13 @@ const findByTestAttr = (wrapper, val) => {
 };
 
 test("renders without crashing", () => {
-  const wrapper = setup();
-  const appComponent = findByTestAttr(wrapper, "component-app");
-  expect(appComponent.length).toBe(1);
+  expect(<Review />).not.toBeNull();
 });
 
-test("render it's child component", () => {
-  const wrapper = setup();
-  expect(wrapper.containsMatchingElement(<Review />)).toEqual(true);
-});
-
-test("Initial state of slideInx is 0", () => {
-  const wrapper = setup();
-  const initialSlideInxState = wrapper.state("slideInx");
-  expect(initialSlideInxState).toBe(0);
+test("check props passed in", () => {
+  const wrapper = shallow(<Review {...AppProps} />);
+  // console.log(wrapper.prop("slideInx"));
+  // console.log(wrapper.debug());
+  // console.log(wrapper.props());
+  expect(wrapper.prop("slideInx")).toEqual(0);
 });
